@@ -281,7 +281,7 @@ public class Camera2BasicFragment extends Fragment
                 // TODO dror... we now have the image....
 
                 Log.d(UDITAG, "bitmap size is " + bitmap.getByteCount());
-                Log.d(UDITAG, "pixel 5x5 is " + bitmap.getPixel(5,5));
+                Log.d(UDITAG, "pixel 5x5 is " + bitmap.getPixel(5, 5));
 
                 img.close();
                 bitmap.recycle();
@@ -323,6 +323,9 @@ public class Camera2BasicFragment extends Fragment
      */
     private int mSensorOrientation;
 
+    Handler myTimer = null;
+    final int myTimerDelay = 5000;
+
     /**
      * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
      */
@@ -330,6 +333,22 @@ public class Camera2BasicFragment extends Fragment
             = new CameraCaptureSession.CaptureCallback() {
 
         private void process(CaptureResult result) {
+
+            if (myTimer == null) {
+                myTimer = new Handler();
+                myTimer.postDelayed(new Runnable() {
+                    private long time = 0;
+
+                    @Override
+                    public void run() {
+                        takePicture();
+                        time += myTimerDelay;
+                        Log.d("MyTimer", "Going for... " + time);
+                        myTimer.postDelayed(this, myTimerDelay);
+                    }
+                }, myTimerDelay); // 1 second delay (takes millis)
+            }
+
             switch (mState) {
                 case STATE_PREVIEW: {
                     // We have nothing to do when the camera preview is working normally.
