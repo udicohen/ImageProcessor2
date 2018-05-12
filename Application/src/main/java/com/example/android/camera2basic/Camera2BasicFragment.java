@@ -289,6 +289,7 @@ public class Camera2BasicFragment extends Fragment
                     offset += rowPadding;
                 }
 
+                Log.e(UDITAG, "4 UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI");
 
                 // TODO dror... we now have the image....
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 30, 25, false);
@@ -302,7 +303,7 @@ public class Camera2BasicFragment extends Fragment
                 img.close();
                 bitmap.recycle();
             }
-            Log.e(UDITAG, "UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI");
+            Log.e(UDITAG, "5 UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI UDI");
         }
 
     };
@@ -661,7 +662,7 @@ public class Camera2BasicFragment extends Fragment
                 Size largest = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new CompareSizesByArea());
-                mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
+                mImageReader = ImageReader.newInstance(1024, 768,
                         ImageFormat.JPEG, /*maxImages*/2);
                 mImageReader.setOnImageAvailableListener(
                         mOnImageAvailableListener, mBackgroundHandler);
