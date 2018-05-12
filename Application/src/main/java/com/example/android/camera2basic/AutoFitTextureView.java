@@ -25,19 +25,24 @@ import android.view.TextureView;
  */
 public class AutoFitTextureView extends TextureView {
 
+    private static Context appContext = null;
+
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
 
     public AutoFitTextureView(Context context) {
         this(context, null);
+        appContext = context;
     }
 
     public AutoFitTextureView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        appContext = context;
     }
 
     public AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        appContext = context;
     }
 
     /**
@@ -73,4 +78,7 @@ public class AutoFitTextureView extends TextureView {
         }
     }
 
+    public static Context getApplicationContext() {
+        return appContext;
+    }
 }

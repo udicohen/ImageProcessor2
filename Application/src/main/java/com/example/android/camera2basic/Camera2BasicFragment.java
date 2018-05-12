@@ -68,9 +68,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 
 public class Camera2BasicFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -279,6 +289,10 @@ public class Camera2BasicFragment extends Fragment
                 }
 
                 // TODO dror... we now have the image....
+                Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 30, 25, false);
+                getPixelData(resizedBitmap);
+
+
 
                 Log.d(UDITAG, "bitmap size is " + bitmap.getByteCount());
                 Log.d(UDITAG, "pixel 5x5 is " + bitmap.getPixel(5, 5));
@@ -290,6 +304,74 @@ public class Camera2BasicFragment extends Fragment
         }
 
     };
+
+    int[][][] color_pixel;
+    protected void getPixelData(Bitmap bitmap) {
+        int height = bitmap.getHeight();
+        int width = bitmap.getWidth();
+        color_pixel = new int[width][][];
+        String colors_in_string = "";
+        for(int i=0;i<width;i++) {
+            color_pixel[i] = new int[height][];
+            for (int j=0;j<height;j++) {
+                int p = bitmap.getPixel(i,j);
+
+                int R = (p & 0xff0000) >> 16;
+                int G = (p & 0x00ff00) >> 8;
+                int B = (p & 0x0000ff) >> 0;
+
+                int[] curr_color = new int[]{R,G,B};
+
+                colors_in_string += "["+R+","+G+","+B+"]";
+
+                color_pixel[i][j] = curr_color;
+
+            }
+        }
+
+        Log.d(UDITAG,colors_in_string);
+
+        send_colors_to_strip(color_pixel, colors_in_string);
+    }
+
+    public void send_colors_to_strip(int[][][] color_pixel, String color_in_string) {
+        final int[][][] color_pixel_ = color_pixel;
+        final String color_in_string_ = color_in_string;
+        RequestQueue queue = Volley.newRequestQueue(com.example.android.camera2basic.AutoFitTextureView.getApplicationContext());
+        String url = "http://10.0.0.100:3101/test";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        //String res = response.substring(0,500);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        VolleyError error_ = error;
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("width",  Integer.toString(color_pixel_.length));
+                params.put("height",  Integer.toString(color_pixel_[0].length));
+                params.put("data", color_in_string_);
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
+
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
