@@ -74,6 +74,7 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -288,6 +289,7 @@ public class Camera2BasicFragment extends Fragment
                     offset += rowPadding;
                 }
 
+
                 // TODO dror... we now have the image....
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, 30, 25, false);
                 getPixelData(resizedBitmap);
@@ -344,6 +346,11 @@ public class Camera2BasicFragment extends Fragment
                 {
                     @Override
                     public void onResponse(String response) {
+                        Log.d(UDITAG, "1#################################################");
+                        Log.d(UDITAG, "1#################################################");
+                        Log.d(UDITAG, "1#################################################");
+                        Log.d(UDITAG, "1#################################################");
+                        Log.d(UDITAG, "1#################################################");
                         // response
                         //String res = response.substring(0,500);
                     }
@@ -352,6 +359,12 @@ public class Camera2BasicFragment extends Fragment
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.d(UDITAG, "2#################################################");
+                        Log.d(UDITAG, "2#################################################");
+                        Log.d(UDITAG, "2#################################################");
+                        Log.d(UDITAG, "2#################################################");
+                        Log.d(UDITAG, "2#################################################");
+                        Log.d(UDITAG, error.toString());
                         // error
                         VolleyError error_ = error;
                     }
@@ -368,6 +381,10 @@ public class Camera2BasicFragment extends Fragment
                 return params;
             }
         };
+
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(postRequest);
 
     }
